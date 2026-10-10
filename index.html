@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PulseAI — Gym Membership Valuator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(18, 24, 38, 0.75);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(99, 102, 241, 0.6);
+      --primary: #6366f1;
+      --primary-glow: rgba(99, 102, 241, 0.35);
+      --accent: #10b981;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --input-bg: #111827;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, var(--bg) 70%);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 460px;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2.25rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px -10px var(--primary-glow);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #818cf8;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 0.75rem;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      background: #818cf8;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #818cf8;
+    }
+
+    h1 {
+      font-size: 1.65rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 30%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin-top: 0.35rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    label.field-label {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.02em;
+    }
+
+    select, input[type="number"] {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      padding: 0.75rem 1rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    select:focus, input[type="number"]:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+
+    .amenities-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .amenity-card {
+      position: relative;
+      cursor: pointer;
+      display: block;
+    }
+
+    .amenity-card input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .amenity-box {
+      border: 1px solid var(--border);
+      background: var(--input-bg);
+      border-radius: 14px;
+      padding: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .amenity-icon {
+      font-size: 1.25rem;
+    }
+
+    .amenity-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .amenity-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .amenity-card input:checked + .amenity-box {
+      background: rgba(99, 102, 241, 0.12);
+      border-color: #6366f1;
+      box-shadow: 0 0 15px -3px rgba(99, 102, 241, 0.2);
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      padding: 0.9rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px -5px rgba(99, 102, 241, 0.5);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .result-card {
+      margin-top: 1.5rem;
+      padding: 1.25rem;
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 16px;
+      text-align: center;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .result-card.show {
+      display: block;
+    }
+
+    .result-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #34d399;
+      font-weight: 700;
+    }
+
+    .result-amount {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0.25rem 0;
+      letter-spacing: -0.03em;
+    }
+
+    .result-unit {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .error-card {
+      margin-top: 1.25rem;
+      padding: 1rem;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: 12px;
+      color: #f87171;
+      font-size: 0.85rem;
+      display: none;
+      line-height: 1.4;
+    }
+
+    .error-card.show {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="badge">
+        <span class="badge-dot"></span> Machine Learning Engine
+      </div>
+      <h1>Gym Rate Predictor</h1>
+      <p class="subtitle">Real-time fair market fee valuation</p>
+    </div>
+
+    <form id="priceForm" onsubmit="event.preventDefault(); estimatePrice();">
+      <div class="form-group">
+        <label class="field-label" for="tier">Location Tier</label>
+        <select id="tier">
+          <option value="Metro">Metro (Tier 1 City / Core Hub)</option>
+          <option value="Tier-2" selected>Tier-2 (Developing City)</option>
+          <option value="Suburban">Suburban (Periphery / Town)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="field-label" for="area">Facility Floor Area (Sq. Ft.)</label>
+        <input type="number" id="area" value="3500" min="500" step="100" required />
+      </div>
+
+      <div class="form-group">
+        <label class="field-label">Included Amenities</label>
+        <div class="amenities-grid">
+          <label class="amenity-card">
+            <input type="checkbox" id="pool" />
+            <div class="amenity-box">
+              <span class="amenity-icon">🏊‍♂️</span>
+              <div class="amenity-info">
+                <span class="amenity-name">Lap Pool</span>
+              </div>
+            </div>
+          </label>
+
+          <label class="amenity-card">
+            <input type="checkbox" id="sauna" />
+            <div class="amenity-box">
+              <span class="amenity-icon">🧖‍♂️</span>
+              <div class="amenity-info">
+                <span class="amenity-name">Sauna / Spa</span>
+              </div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" id="submitBtn" class="btn-submit">
+        <span>Calculate Valuation</span>
+      </button>
+    </form>
+
+    <div id="resultCard" class="result-card">
+      <div class="result-label">Market Value Estimate</div>
+      <div class="result-amount" id="priceValue">₹0</div>
+      <div class="result-unit">per member / month</div>
+    </div>
+
+    <div id="errorCard" class="error-card"></div>
+  </div>
+
+  <script>
+    async function estimatePrice() {
+      const btn = document.getElementById("submitBtn");
+      const resultCard = document.getElementById("resultCard");
+      const errorCard = document.getElementById("errorCard");
+      const priceValue = document.getElementById("priceValue");
+
+      btn.disabled = true;
+      btn.innerHTML = "<span>Analyzing Features...</span>";
+      resultCard.classList.remove("show");
+      errorCard.classList.remove("show");
+
+      const payload = {
+        tier: document.getElementById("tier").value,
+        area_sqft: parseInt(document.getElementById("area").value, 10) || 3000,
+        has_pool: document.getElementById("pool").checked ? 1 : 0,
+        has_sauna: document.getElementById("sauna").checked ? 1 : 0
+      };
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(`Server returned error ${response.status}: ${JSON.stringify(errData)}`);
+        }
+
+        const data = await response.json();
+        priceValue.innerText = "₹" + Number(data.estimated_monthly_rate).toLocaleString("en-IN");
+        resultCard.classList.add("show");
+      } catch (err) {
+        errorCard.innerText = "Connection failed: " + err.message + "\n\nMake sure your server is running with 'py -m uvicorn app:app --reload --port 8000'.";
+        errorCard.classList.add("show");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = "<span>Calculate Valuation</span>";
+      }
+    }
+  </script>
+</body>
+</html>
